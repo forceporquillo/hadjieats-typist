@@ -1,4 +1,4 @@
-from entity.details import Details as deets
+from model.details import Details as deets
 from view.project_controller import ProjectDetailsController as PDController
 
 
@@ -44,12 +44,15 @@ class ConsoleView:
         print("\n" * 5)
 
         if choice == 1:
-            # TODO: handle exceptions
-            self._c.write(deets(
-                title=input(self._title_str),
-                size=int(input(self._size_str)),
-                priority=int(input(self._priority_str))
-            ))
+            try:
+                self._c.write(deets(
+                    title=input(self._title_str),
+                    size=int(input(self._size_str)),
+                    priority=int(input(self._priority_str))
+                ))
+
+            except ValueError:
+                pass
 
         # View Projects
         elif choice == 2:
@@ -61,9 +64,14 @@ class ConsoleView:
                 data = self._c.search(p_id)
                 self._display_one_project(data)
             elif sub == "b":
-                pass
+                print("Completed Projects")
+                for items in self._c.view_completed():
+                    self._show_completed(items)
             elif sub == "c":
-                for d in self._c.all_projects():
+                items = self._c.all_projects()
+                if len(items) == 0:
+                    print("Document is empty...")
+                for d in items:
                     self._display_one_project(d)
 
         elif choice == 3:
@@ -80,6 +88,8 @@ class ConsoleView:
             skip = self.get_project()
             flag = 4
 
+        elif choice == 5:
+            exit()
         self._menu() if not skip else self._navigate(flag)
 
     @staticmethod
@@ -100,7 +110,7 @@ class ConsoleView:
         print("\tb. View Schedule")
 
     def _display_one_project(self, data):
-        if data is not None:
+        if data is not None and not isinstance(data, str):
             print("-----------------------------------")
             print("| " + self._project_id_str, data.id)
             print("| " + self._title_str, data.title)
@@ -108,7 +118,10 @@ class ConsoleView:
             print("| " + self._priority_str, data.priority)
             print("-----------------------------------")
         else:
-            print("No Document found in the project.")
+            if isinstance(data, str):
+                print("This document with project ID: " + data + " has been recently deleted.")
+            else:
+                print("No Document found in the project.")
 
     def _display_created_schedule(self):
         schedule = self._c.create_schedule()
@@ -178,19 +191,30 @@ class ConsoleView:
             print("-----------------------------------")
 
     def get_project(self):
-        schedule = self._c.get_schedule()
+        # TODO: Fix
+        top_most = self._c.get_schedule()
 
-        if not self._is_created and not schedule:
+        if not self._is_created and not top_most:
             print("You must create a schedule first before you can queue and get a project.")
             return False
 
-        top = schedule[0]
+        top = top_most
 
-        print("Your top most document with project ID: " + str(top.id) + " has been removed from the queue.")
-        self._c.update_data_sources(top)
+        try:
+            print("Your top most document with project ID: " + str(top.id) + " has been removed from the queue.")
+        except AttributeError:
+            print("Empty...")
+
         return False
+
+    def _show_completed(self, i):
+        print("----------------------------")
+        print(self._project_id_str + str(i.id))
+        print(self._title_str + str(i.title))
+        print(self._size_str + str(i.size))
+        print(self._priority_str + str(i.priority))
 
 
 if __name__ == '__main__':
-    # persist data whenever it throws an exception
-    ConsoleView(PDController().auto_write(True))
+    # Creates 25 random project inputs into the file if set to True.
+    ConsoleView(PDController().auto_write(False))
