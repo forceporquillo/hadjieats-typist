@@ -2,7 +2,6 @@ import csv
 import os
 import uuid
 from abc import abstractmethod, ABC
-
 from model.details import Details
 
 
@@ -242,11 +241,11 @@ class ProjectDetailsDao(BaseDao):
         Get the sorted scheduled items from self._sorted_items,
         first it checks if the schedule is created then it checks its length.
 
-        If contains, it'll linearly reference the top most object using the increment member variable.
+        If it contains, it'll linearly reference the top most object using the increment member variable.
 
         If it throws an exception, this indicates that the sorted item is already empty.
-
-        Lastly. call set to invalidate to re-initialize the dictReader.
+        And it invalidates the dictReader to re-initialize. Otherwise, it creates another set of
+        schedule details list.
 
         :return: list of scheduled Details object if is scheduled. Otherwise, None.
         """
@@ -261,8 +260,9 @@ class ProjectDetailsDao(BaseDao):
                     self._sorted_items = []
                     self._increment = 0
                     self.invalidate()
-
                 return deets
+            else:
+                return self.create_schedule()
         return None
 
     def create_schedule(self) -> list:

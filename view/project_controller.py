@@ -23,6 +23,7 @@ class ProjectDetailsController:
 
     def write(self, details):
         self.__project.write(details)
+        print("\nSuccessfully writing a project.")
 
     def search(self, uid):
         """
@@ -40,7 +41,7 @@ class ProjectDetailsController:
 
     def auto_write(self, flag):
         if flag:
-            for i in range(0, 25):
+            for i in range(0, 5):
                 letters = string.ascii_lowercase
                 self.__project.write(
                     deets(
@@ -54,7 +55,7 @@ class ProjectDetailsController:
     def create_schedule(self) -> list:
         """
         Get the created sorted schedule in the data source.
-        :return: sorted projects ID
+        :return: sorted projects based on its ID
         """
         return self.__project.create_schedule()
 

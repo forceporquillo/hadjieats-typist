@@ -41,18 +41,19 @@ class ConsoleView:
         skip = False
         flag = None
 
-        print("\n" * 5)
+        print("\n" * 2)
 
         if choice == 1:
             try:
-                self._c.write(deets(
-                    title=input(self._title_str),
-                    size=int(input(self._size_str)),
-                    priority=int(input(self._priority_str))
-                ))
+                title = input(self._title_str)
+                size = int(input(self._size_str))
+                priority = int(input(self._priority_str))
 
+                if size < -1 and priority < -1:
+                    raise ValueError
+                self.write_project(title, size, priority)
             except ValueError:
-                pass
+                print("Size or Priority number must be a valid integer")
 
         # View Projects
         elif choice == 2:
@@ -89,6 +90,7 @@ class ConsoleView:
             flag = 4
 
         elif choice == 5:
+            print("Thank you!")
             exit()
         self._menu() if not skip else self._navigate(flag)
 
@@ -108,6 +110,9 @@ class ConsoleView:
         print("3. Schedule Projects")
         print("\ta. Create Schedule")
         print("\tb. View Schedule")
+
+    def write_project(self, title, size, priority):
+        self._c.write(deets(title=title, size=size, priority=priority))
 
     def _display_one_project(self, data):
         if data is not None and not isinstance(data, str):
@@ -146,7 +151,6 @@ class ConsoleView:
         list_items, is_updated = self._c.view_schedule(invalidate)
 
         if (not list_items or len(list_items) == 0) and not is_updated:
-            print("called")
             show = self._show_if_not_created()
             if show:
                 self._show_updated_schedule(show)
