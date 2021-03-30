@@ -41,7 +41,7 @@ class ProjectDetailsController:
 
     def auto_write(self, flag):
         if flag:
-            for i in range(0, 5):
+            for i in range(0, 100):
                 letters = string.ascii_lowercase
                 self.__project.write(
                     deets(

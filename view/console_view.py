@@ -220,5 +220,5 @@ class ConsoleView:
 
 
 if __name__ == '__main__':
-    # Creates 25 random project inputs into the file if set to True.
-    ConsoleView(PDController().auto_write(False))
+    # Creates 15 random project inputs into the file if set to True.
+    ConsoleView(PDController().auto_write(True))
