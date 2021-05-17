@@ -86,6 +86,7 @@ class ProjectDetailsController:
             self.__completed.write(details)
             self.__project.remove(details)
 
+    #view_completed
     def view_completed(self):
         """
         Get all completed projects in the data source.
